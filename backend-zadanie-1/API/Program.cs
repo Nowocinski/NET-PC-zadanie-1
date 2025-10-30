@@ -1,14 +1,39 @@
+using System.Security.Claims;
+using System.Text;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Configure JWT Authentication
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings["Issuer"],
+            ValidAudience = jwtSettings["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 // Configure CORS
 builder.Services.AddCors(options =>
@@ -57,6 +82,9 @@ app.UseCors("AllowAngularApp");
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 // Auth endpoints
 app.MapPost("/api/auth/login", async (LoginRequest request, IUserRepository userRepository) =>
 {
@@ -99,9 +127,38 @@ app.MapDelete("/api/contacts/{id}", async (Guid id, IContactRepository contactRe
 .WithName("DeleteContact")
 .WithOpenApi();
 
+app.MapPost("/api/contacts", async (CreateContactRequest request, ClaimsPrincipal user, IContactRepository contactRepository) =>
+{
+    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    
+    if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+        return Results.Unauthorized();
+    
+    var contact = new Core.Entities.Contact
+    {
+        Id = Guid.NewGuid(),
+        UserId = userId,
+        FirstName = request.FirstName,
+        LastName = request.LastName,
+        Email = request.Email,
+        Phone = request.Phone,
+        BirthDate = DateTime.SpecifyKind(request.BirthDate, DateTimeKind.Utc),
+        CategoryId = request.CategoryId,
+        SubcategoryId = request.SubcategoryId,
+        Password = request.Password
+    };
+    
+    var createdContact = await contactRepository.AddAsync(contact);
+    return Results.Created($"/api/contacts/{createdContact.Id}", createdContact);
+})
+.RequireAuthorization()
+.WithName("CreateContact")
+.WithOpenApi();
+
 app.Run();
 
 record LoginRequest(string Email, string Password);
 record LoginResponse(string AccessToken, string RefreshToken);
 record RegisterRequest(string Email, string Password, string Name);
 record RegisterResponse(Guid Id, string Email, string Name);
+record CreateContactRequest(string FirstName, string LastName, string Email, string Phone, DateTime BirthDate, Guid? CategoryId, Guid? SubcategoryId, string Password);
