@@ -1,0 +1,23 @@
+<div>
+  <h2>Contacts</h2>
+
+  @if (isLoading) {
+    <p>Loading contacts...</p>
+  }
+
+  @if (errorMessage) {
+    <p>{{ errorMessage }}</p>
+  }
+
+  @if (!isLoading && contacts.length === 0) {
+    <p>No contacts found.</p>
+  }
+
+  @if (!isLoading && contacts.length > 0) {
+    <ul>
+      @for (contact of contacts; track contact.id) {
+        <li>{{ contact.firstName }} {{ contact.lastName }}</li>
+      }
+    </ul>
+  }
+</div>

@@ -83,9 +83,9 @@ app.MapPost("/api/auth/register", async (RegisterRequest request, IUserRepositor
 .WithOpenApi();
 
 // Contact endpoints
-app.MapGet("/api/contacts", async (Guid userId, IContactRepository contactRepository) =>
+app.MapGet("/api/contacts", async (IContactRepository contactRepository) =>
 {
-    var contacts = await contactRepository.GetAllByUserIdAsync(userId);
+    var contacts = await contactRepository.GetAllAsync();
     return Results.Ok(contacts);
 })
 .WithName("GetContacts")

@@ -7,11 +7,10 @@ namespace Infrastructure.Repositories;
 
 public class ContactRepository(ApplicationDbContext context) : IContactRepository
 {
-    public async Task<IEnumerable<Contact>> GetAllByUserIdAsync(Guid userId) =>
+    public async Task<IEnumerable<Contact>> GetAllAsync() =>
         await context.Contacts
             .Include(c => c.Category)
             .Include(c => c.Subcategory)
-            .Where(c => c.UserId == userId)
             .ToListAsync();
 
     public async Task<Contact> AddAsync(Contact contact)
