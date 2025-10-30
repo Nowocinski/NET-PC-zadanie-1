@@ -155,6 +155,29 @@ app.MapPost("/api/contacts", async (CreateContactRequest request, ClaimsPrincipa
 .WithName("CreateContact")
 .WithOpenApi();
 
+app.MapPut("/api/contacts/{id}", async (Guid id, UpdateContactRequest request, IContactRepository contactRepository) =>
+{
+    var contact = new Core.Entities.Contact
+    {
+        Id = id,
+        UserId = request.UserId,
+        FirstName = request.FirstName,
+        LastName = request.LastName,
+        Email = request.Email,
+        Phone = request.Phone,
+        BirthDate = DateTime.SpecifyKind(request.BirthDate, DateTimeKind.Utc),
+        CategoryId = request.CategoryId,
+        SubcategoryId = request.SubcategoryId,
+        Password = request.Password
+    };
+    
+    await contactRepository.UpdateAsync(contact);
+    return Results.NoContent();
+})
+.RequireAuthorization()
+.WithName("UpdateContact")
+.WithOpenApi();
+
 app.Run();
 
 record LoginRequest(string Email, string Password);
@@ -162,3 +185,4 @@ record LoginResponse(string AccessToken, string RefreshToken);
 record RegisterRequest(string Email, string Password, string Name);
 record RegisterResponse(Guid Id, string Email, string Name);
 record CreateContactRequest(string FirstName, string LastName, string Email, string Phone, DateTime BirthDate, Guid? CategoryId, Guid? SubcategoryId, string Password);
+record UpdateContactRequest(Guid UserId, string FirstName, string LastName, string Email, string Phone, DateTime BirthDate, Guid? CategoryId, Guid? SubcategoryId, string Password);
