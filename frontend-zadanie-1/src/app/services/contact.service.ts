@@ -25,6 +25,18 @@ export interface CreateContactRequest {
   password: string;
 }
 
+export interface UpdateContactRequest {
+  userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  birthDate: string;
+  categoryId?: string;
+  subcategoryId?: string;
+  password: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -39,6 +51,10 @@ export class ContactService {
 
   createContact(request: CreateContactRequest): Observable<Contact> {
     return this.http.post<Contact>(this.apiUrl, request);
+  }
+
+  updateContact(id: string, request: UpdateContactRequest): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}`, request);
   }
 
   deleteContact(id: string): Observable<void> {
