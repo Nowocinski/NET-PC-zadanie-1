@@ -20,8 +20,14 @@
   @if (!isLoading() && contacts().length > 0) {
     <ul>
       @for (contact of contacts(); track contact.id) {
-        <li (click)="selectContact(contact)" style="cursor: pointer;">
-          {{ contact.firstName }} {{ contact.lastName }}
+        <li>
+          <span (click)="selectContact(contact)" style="cursor: pointer;">
+            {{ contact.firstName }} {{ contact.lastName }}
+          </span>
+          @if (isAuthenticated()) {
+            <button (click)="editContact(contact)">Edit</button>
+            <button (click)="deleteContact(contact.id)">Delete</button>
+          }
         </li>
       }
     </ul>

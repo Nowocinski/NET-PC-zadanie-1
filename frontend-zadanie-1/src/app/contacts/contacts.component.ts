@@ -55,4 +55,14 @@ export class ContactsComponent implements OnInit {
   goToLogin() {
     this.router.navigate(['/login']);
   }
+
+  editContact(contact: Contact) {
+    // TODO: Implement
+    console.log('Edit contact', contact);
+  }
+
+  deleteContact(contactId: string) {
+    // TODO: Implement
+    console.log('Delete contact', contactId);
+  }
 }
