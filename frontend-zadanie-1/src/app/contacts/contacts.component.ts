@@ -62,7 +62,25 @@ export class ContactsComponent implements OnInit {
   }
 
   deleteContact(contactId: string) {
-    // TODO: Implement
-    console.log('Delete contact', contactId);
+    if (!confirm('Are you sure you want to delete this contact?')) {
+      return;
+    }
+
+    this.contactService.deleteContact(contactId).subscribe({
+      next: () => {
+        // Remove contact from the list
+        const updatedContacts = this.contacts().filter(c => c.id !== contactId);
+        this.contacts.set(updatedContacts);
+        
+        // Close details if deleted contact was selected
+        if (this.selectedContact()?.id === contactId) {
+          this.selectedContact.set(null);
+        }
+      },
+      error: (error) => {
+        this.errorMessage.set('Failed to delete contact');
+        console.error('Delete failed', error);
+      }
+    });
   }
 }

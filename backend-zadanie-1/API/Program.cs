@@ -91,6 +91,14 @@ app.MapGet("/api/contacts", async (IContactRepository contactRepository) =>
 .WithName("GetContacts")
 .WithOpenApi();
 
+app.MapDelete("/api/contacts/{id}", async (Guid id, IContactRepository contactRepository) =>
+{
+    await contactRepository.DeleteAsync(id);
+    return Results.NoContent();
+})
+.WithName("DeleteContact")
+.WithOpenApi();
+
 app.Run();
 
 record LoginRequest(string Email, string Password);
