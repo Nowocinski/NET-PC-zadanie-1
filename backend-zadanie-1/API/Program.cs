@@ -30,28 +30,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+// Auth endpoints
+app.MapPost("/api/auth/login", async (LoginRequest request, IUserRepository userRepository) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast");
+    var tokens = await userRepository.GenerateTokensAsync(request.Email, request.Password);
+    
+    if (!tokens.HasValue)
+        return Results.Unauthorized();
+    
+    return Results.Ok(new LoginResponse(tokens.Value.accessToken, tokens.Value.refreshToken));
+})
+.WithName("Login")
+.WithOpenApi();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+record LoginRequest(string Email, string Password);
+record LoginResponse(string AccessToken, string RefreshToken);
