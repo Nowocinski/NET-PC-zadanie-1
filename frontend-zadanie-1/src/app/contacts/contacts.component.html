@@ -5,6 +5,50 @@
 
   <h2>Contacts</h2>
 
+  @if (isAuthenticated()) {
+    <button (click)="showAddContactForm()">Add New Contact</button>
+  }
+
+  @if (showAddForm()) {
+    <div>
+      <h3>Add New Contact</h3>
+      <form (ngSubmit)="addContact()">
+        <div>
+          <label for="firstName">First Name:</label>
+          <input type="text" id="firstName" name="firstName" [(ngModel)]="newContact.firstName" required />
+        </div>
+        
+        <div>
+          <label for="lastName">Last Name:</label>
+          <input type="text" id="lastName" name="lastName" [(ngModel)]="newContact.lastName" required />
+        </div>
+        
+        <div>
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" [(ngModel)]="newContact.email" required />
+        </div>
+        
+        <div>
+          <label for="phone">Phone:</label>
+          <input type="tel" id="phone" name="phone" [(ngModel)]="newContact.phone" required />
+        </div>
+        
+        <div>
+          <label for="birthDate">Birth Date:</label>
+          <input type="date" id="birthDate" name="birthDate" [(ngModel)]="newContact.birthDate" required />
+        </div>
+        
+        <div>
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" [(ngModel)]="newContact.password" required />
+        </div>
+        
+        <button type="submit">Save</button>
+        <button type="button" (click)="hideAddContactForm()">Cancel</button>
+      </form>
+    </div>
+  }
+
   @if (isLoading()) {
     <p>Loading contacts...</p>
   }

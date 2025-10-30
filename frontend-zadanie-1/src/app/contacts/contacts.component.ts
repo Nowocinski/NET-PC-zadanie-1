@@ -1,12 +1,13 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Contact, ContactService } from '../services/contact.service';
+import { Contact, ContactService, CreateContactRequest } from '../services/contact.service';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-contacts',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './contacts.component.html'
 })
 export class ContactsComponent implements OnInit {
@@ -15,6 +16,16 @@ export class ContactsComponent implements OnInit {
   errorMessage = signal('');
   selectedContact = signal<Contact | null>(null);
   isAuthenticated = signal(false);
+  showAddForm = signal(false);
+  
+  newContact = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    birthDate: '',
+    password: ''
+  };
 
   constructor(
     private readonly contactService: ContactService,
@@ -80,6 +91,51 @@ export class ContactsComponent implements OnInit {
       error: (error) => {
         this.errorMessage.set('Failed to delete contact');
         console.error('Delete failed', error);
+      }
+    });
+  }
+
+  showAddContactForm() {
+    this.showAddForm.set(true);
+    this.resetNewContactForm();
+  }
+
+  hideAddContactForm() {
+    this.showAddForm.set(false);
+    this.resetNewContactForm();
+  }
+
+  resetNewContactForm() {
+    this.newContact = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      birthDate: '',
+      password: ''
+    };
+  }
+
+  addContact() {
+    const request: CreateContactRequest = {
+      firstName: this.newContact.firstName,
+      lastName: this.newContact.lastName,
+      email: this.newContact.email,
+      phone: this.newContact.phone,
+      birthDate: this.newContact.birthDate,
+      password: this.newContact.password
+    };
+
+    this.contactService.createContact(request).subscribe({
+      next: (contact) => {
+        // Add new contact to the list
+        const updatedContacts = [...this.contacts(), contact];
+        this.contacts.set(updatedContacts);
+        this.hideAddContactForm();
+      },
+      error: (error) => {
+        this.errorMessage.set('Failed to create contact');
+        console.error('Create failed', error);
       }
     });
   }

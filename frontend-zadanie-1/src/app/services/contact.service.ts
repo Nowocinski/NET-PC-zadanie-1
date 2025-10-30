@@ -14,6 +14,17 @@ export interface Contact {
   subcategoryId?: string;
 }
 
+export interface CreateContactRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  birthDate: string;
+  categoryId?: string;
+  subcategoryId?: string;
+  password: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,6 +35,10 @@ export class ContactService {
 
   getContacts(): Observable<Contact[]> {
     return this.http.get<Contact[]>(this.apiUrl);
+  }
+
+  createContact(request: CreateContactRequest): Observable<Contact> {
+    return this.http.post<Contact>(this.apiUrl, request);
   }
 
   deleteContact(id: string): Observable<void> {
