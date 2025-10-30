@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Contact, ContactService } from '../services/contact.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-contacts',
@@ -13,13 +14,16 @@ export class ContactsComponent implements OnInit {
   isLoading = signal(false);
   errorMessage = signal('');
   selectedContact = signal<Contact | null>(null);
+  isAuthenticated = signal(false);
 
   constructor(
     private readonly contactService: ContactService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly authService: AuthService
   ) {}
 
   ngOnInit() {
+    this.isAuthenticated.set(this.authService.isAuthenticated());
     this.loadContacts();
   }
 

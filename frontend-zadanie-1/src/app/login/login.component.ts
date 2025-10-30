@@ -27,8 +27,7 @@ export class LoginComponent {
       next: (response) => {
         this.authService.saveTokens(response.accessToken, response.refreshToken);
         this.isLoading = false;
-        // TODO: Navigate to main page
-        console.log('Login successful', response);
+        this.router.navigate(['/']);
       },
       error: (error) => {
         this.isLoading = false;

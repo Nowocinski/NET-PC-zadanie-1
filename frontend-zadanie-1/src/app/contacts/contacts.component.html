@@ -1,6 +1,7 @@
 <div>
-  <button (click)="goToLogin()">Go to Login</button>
-
+  @if (!isAuthenticated()) {
+    <button (click)="goToLogin()">Go to Login</button>
+  }
 
   <h2>Contacts</h2>
 
