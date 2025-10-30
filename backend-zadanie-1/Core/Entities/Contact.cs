@@ -11,4 +11,9 @@ public class Contact : BaseEntity
     public required DateTime BirthDate { get; set; }
     public Guid? CategoryId { get; set; }
     public Guid? SubcategoryId { get; set; }
+    
+    // Navigation properties
+    public User? User { get; set; }
+    public Category? Category { get; set; }
+    public Subcategory? Subcategory { get; set; }
 }
