@@ -1,5 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Contact, ContactService } from '../services/contact.service';
 
 @Component({
@@ -13,7 +14,10 @@ export class ContactsComponent implements OnInit {
   errorMessage = signal('');
   selectedContact = signal<Contact | null>(null);
 
-  constructor(private readonly contactService: ContactService) {}
+  constructor(
+    private readonly contactService: ContactService,
+    private readonly router: Router
+  ) {}
 
   ngOnInit() {
     this.loadContacts();
@@ -42,5 +46,9 @@ export class ContactsComponent implements OnInit {
 
   closeDetails() {
     this.selectedContact.set(null);
+  }
+
+  goToLogin() {
+    this.router.navigate(['/login']);
   }
 }
