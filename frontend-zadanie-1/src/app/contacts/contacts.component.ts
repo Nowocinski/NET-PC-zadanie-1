@@ -11,6 +11,7 @@ export class ContactsComponent implements OnInit {
   contacts = signal<Contact[]>([]);
   isLoading = signal(false);
   errorMessage = signal('');
+  selectedContact = signal<Contact | null>(null);
 
   constructor(private readonly contactService: ContactService) {}
 
@@ -33,5 +34,13 @@ export class ContactsComponent implements OnInit {
         console.error('Error loading contacts', error);
       }
     });
+  }
+
+  selectContact(contact: Contact) {
+    this.selectedContact.set(contact);
+  }
+
+  closeDetails() {
+    this.selectedContact.set(null);
   }
 }

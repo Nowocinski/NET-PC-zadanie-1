@@ -16,8 +16,30 @@
   @if (!isLoading() && contacts().length > 0) {
     <ul>
       @for (contact of contacts(); track contact.id) {
-        <li>{{ contact.firstName }} {{ contact.lastName }}</li>
+        <li (click)="selectContact(contact)" style="cursor: pointer;">
+          {{ contact.firstName }} {{ contact.lastName }}
+        </li>
       }
     </ul>
+  }
+
+  @if (selectedContact()) {
+    <div>
+      <h3>Contact Details</h3>
+      <p><strong>ID:</strong> {{ selectedContact()!.id }}</p>
+      <p><strong>First Name:</strong> {{ selectedContact()!.firstName }}</p>
+      <p><strong>Last Name:</strong> {{ selectedContact()!.lastName }}</p>
+      <p><strong>Email:</strong> {{ selectedContact()!.email }}</p>
+      <p><strong>Phone:</strong> {{ selectedContact()!.phone }}</p>
+      <p><strong>Birth Date:</strong> {{ selectedContact()!.birthDate }}</p>
+      <p><strong>User ID:</strong> {{ selectedContact()!.userId }}</p>
+      @if (selectedContact()!.categoryId) {
+        <p><strong>Category ID:</strong> {{ selectedContact()!.categoryId }}</p>
+      }
+      @if (selectedContact()!.subcategoryId) {
+        <p><strong>Subcategory ID:</strong> {{ selectedContact()!.subcategoryId }}</p>
+      }
+      <button (click)="closeDetails()">Close</button>
+    </div>
   }
 </div>
