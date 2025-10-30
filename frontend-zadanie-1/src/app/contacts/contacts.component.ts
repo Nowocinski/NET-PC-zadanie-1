@@ -2,7 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Contact, ContactService, CreateContactRequest } from '../services/contact.service';
+import { Contact, ContactService, CreateContactRequest, UpdateContactRequest } from '../services/contact.service';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -17,8 +17,19 @@ export class ContactsComponent implements OnInit {
   selectedContact = signal<Contact | null>(null);
   isAuthenticated = signal(false);
   showAddForm = signal(false);
+  showEditForm = signal(false);
+  editingContact = signal<Contact | null>(null);
   
   newContact = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    birthDate: '',
+    password: ''
+  };
+
+  editContactData = {
     firstName: '',
     lastName: '',
     email: '',
@@ -67,9 +78,54 @@ export class ContactsComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
-  editContact(contact: Contact) {
-    // TODO: Implement
-    console.log('Edit contact', contact);
+  showEditContactForm(contact: Contact) {
+    this.editingContact.set(contact);
+    this.editContactData = {
+      firstName: contact.firstName,
+      lastName: contact.lastName,
+      email: contact.email,
+      phone: contact.phone,
+      birthDate: contact.birthDate.split('T')[0], // Convert to YYYY-MM-DD format
+      password: ''
+    };
+    this.showEditForm.set(true);
+  }
+
+  hideEditContactForm() {
+    this.showEditForm.set(false);
+    this.editingContact.set(null);
+  }
+
+  updateContact() {
+    const contact = this.editingContact();
+    if (!contact) return;
+
+    const request: UpdateContactRequest = {
+      userId: contact.userId,
+      firstName: this.editContactData.firstName,
+      lastName: this.editContactData.lastName,
+      email: this.editContactData.email,
+      phone: this.editContactData.phone,
+      birthDate: this.editContactData.birthDate,
+      password: this.editContactData.password
+    };
+
+    this.contactService.updateContact(contact.id, request).subscribe({
+      next: () => {
+        // Update contact in the list
+        const updatedContacts = this.contacts().map(c => 
+          c.id === contact.id 
+            ? { ...c, ...request, id: contact.id, birthDate: this.editContactData.birthDate }
+            : c
+        );
+        this.contacts.set(updatedContacts);
+        this.hideEditContactForm();
+      },
+      error: (error) => {
+        this.errorMessage.set('Failed to update contact');
+        console.error('Update failed', error);
+      }
+    });
   }
 
   deleteContact(contactId: string) {

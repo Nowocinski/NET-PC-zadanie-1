@@ -49,6 +49,46 @@
     </div>
   }
 
+  @if (showEditForm()) {
+    <div>
+      <h3>Edit Contact</h3>
+      <form (ngSubmit)="updateContact()">
+        <div>
+          <label for="editFirstName">First Name:</label>
+          <input type="text" id="editFirstName" name="editFirstName" [(ngModel)]="editContactData.firstName" required />
+        </div>
+        
+        <div>
+          <label for="editLastName">Last Name:</label>
+          <input type="text" id="editLastName" name="editLastName" [(ngModel)]="editContactData.lastName" required />
+        </div>
+        
+        <div>
+          <label for="editEmail">Email:</label>
+          <input type="email" id="editEmail" name="editEmail" [(ngModel)]="editContactData.email" required />
+        </div>
+        
+        <div>
+          <label for="editPhone">Phone:</label>
+          <input type="tel" id="editPhone" name="editPhone" [(ngModel)]="editContactData.phone" required />
+        </div>
+        
+        <div>
+          <label for="editBirthDate">Birth Date:</label>
+          <input type="date" id="editBirthDate" name="editBirthDate" [(ngModel)]="editContactData.birthDate" required />
+        </div>
+        
+        <div>
+          <label for="editPassword">Password:</label>
+          <input type="password" id="editPassword" name="editPassword" [(ngModel)]="editContactData.password" required />
+        </div>
+        
+        <button type="submit">Update</button>
+        <button type="button" (click)="hideEditContactForm()">Cancel</button>
+      </form>
+    </div>
+  }
+
   @if (isLoading()) {
     <p>Loading contacts...</p>
   }
@@ -69,7 +109,7 @@
             {{ contact.firstName }} {{ contact.lastName }}
           </span>
           @if (isAuthenticated()) {
-            <button (click)="editContact(contact)">Edit</button>
+            <button (click)="showEditContactForm(contact)">Edit</button>
             <button (click)="deleteContact(contact.id)">Delete</button>
           }
         </li>
