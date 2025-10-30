@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Contact, ContactService } from '../services/contact.service';
 
@@ -8,9 +8,9 @@ import { Contact, ContactService } from '../services/contact.service';
   templateUrl: './contacts.component.html'
 })
 export class ContactsComponent implements OnInit {
-  contacts: Contact[] = [];
-  isLoading = false;
-  errorMessage = '';
+  contacts = signal<Contact[]>([]);
+  isLoading = signal(false);
+  errorMessage = signal('');
 
   constructor(private readonly contactService: ContactService) {}
 
@@ -19,17 +19,17 @@ export class ContactsComponent implements OnInit {
   }
 
   loadContacts() {
-    this.isLoading = true;
-    this.errorMessage = '';
+    this.isLoading.set(true);
+    this.errorMessage.set('');
     
     this.contactService.getContacts().subscribe({
       next: (contacts) => {
-        this.contacts = contacts;
-        this.isLoading = false;
+        this.contacts.set(contacts);
+        this.isLoading.set(false);
       },
       error: (error) => {
-        this.errorMessage = 'Failed to load contacts';
-        this.isLoading = false;
+        this.errorMessage.set('Failed to load contacts');
+        this.isLoading.set(false);
         console.error('Error loading contacts', error);
       }
     });
