@@ -30,6 +30,7 @@ builder.Services.AddScoped<JwtTokenService>();
 
 // Register repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IContactRepository, ContactRepository>();
 
 var app = builder.Build();
 
@@ -79,6 +80,15 @@ app.MapPost("/api/auth/register", async (RegisterRequest request, IUserRepositor
     return Results.Ok(new RegisterResponse(user.Id, user.Email, user.Name));
 })
 .WithName("Register")
+.WithOpenApi();
+
+// Contact endpoints
+app.MapGet("/api/contacts", async (Guid userId, IContactRepository contactRepository) =>
+{
+    var contacts = await contactRepository.GetAllByUserIdAsync(userId);
+    return Results.Ok(contacts);
+})
+.WithName("GetContacts")
 .WithOpenApi();
 
 app.Run();
