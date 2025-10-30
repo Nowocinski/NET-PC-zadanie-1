@@ -59,16 +59,32 @@ builder.Services.AddScoped<IContactRepository, ContactRepository>();
 
 var app = builder.Build();
 
-// Seed admin user
+// Seed data
 using (var scope = app.Services.CreateScope())
 {
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-    var adminEmail = "admin@netpc.pl";
     
+    // Seed admin user
+    var adminEmail = "admin@netpc.pl";
     var existingAdmin = await userRepository.GetByEmailAsync(adminEmail);
     if (existingAdmin == null)
     {
         await userRepository.RegisterAsync(adminEmail, "**TSCBf2hS**", "Administrator");
+    }
+    
+    // Seed categories
+    if (!dbContext.Categories.Any())
+    {
+        var categories = new[]
+        {
+            new Core.Entities.Category { Id = Guid.NewGuid(), Name = "Służbowy" },
+            new Core.Entities.Category { Id = Guid.NewGuid(), Name = "Prywatny" },
+            new Core.Entities.Category { Id = Guid.NewGuid(), Name = "Inny" }
+        };
+        
+        await dbContext.Categories.AddRangeAsync(categories);
+        await dbContext.SaveChangesAsync();
     }
 }
 
