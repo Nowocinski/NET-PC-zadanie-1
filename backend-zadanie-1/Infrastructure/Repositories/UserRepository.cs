@@ -29,4 +29,28 @@ public class UserRepository(ApplicationDbContext context, JwtTokenService tokenS
 
         return (accessToken, refreshToken);
     }
+
+    public async Task<User?> RegisterAsync(string email, string password, string name)
+    {
+        var existingUser = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (existingUser != null)
+            return null;
+
+        // Hash password using BCrypt
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Email = email,
+            PasswordHash = passwordHash,
+            Name = name,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await context.Users.AddAsync(user);
+        await context.SaveChangesAsync();
+
+        return user;
+    }
 }

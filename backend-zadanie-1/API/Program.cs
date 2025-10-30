@@ -56,7 +56,21 @@ app.MapPost("/api/auth/login", async (LoginRequest request, IUserRepository user
 .WithName("Login")
 .WithOpenApi();
 
+app.MapPost("/api/auth/register", async (RegisterRequest request, IUserRepository userRepository) =>
+{
+    var user = await userRepository.RegisterAsync(request.Email, request.Password, request.Name);
+    
+    if (user == null)
+        return Results.BadRequest(new { message = "User with this email already exists" });
+    
+    return Results.Ok(new RegisterResponse(user.Id, user.Email, user.Name));
+})
+.WithName("Register")
+.WithOpenApi();
+
 app.Run();
 
 record LoginRequest(string Email, string Password);
 record LoginResponse(string AccessToken, string RefreshToken);
+record RegisterRequest(string Email, string Password, string Name);
+record RegisterResponse(Guid Id, string Email, string Name);
