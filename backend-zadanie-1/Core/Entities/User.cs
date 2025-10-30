@@ -1,8 +1,7 @@
 namespace Core.Entities;
 
-public class User
+public class User : BaseEntity
 {
-    public Guid Id { get; set; }
     public required string Email { get; set; }
     public required string PasswordHash { get; set; }
     public required string Name { get; set; }

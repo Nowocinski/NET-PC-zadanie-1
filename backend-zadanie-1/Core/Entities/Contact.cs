@@ -1,8 +1,7 @@
 namespace Core.Entities;
 
-public class Contact
+public class Contact : BaseEntity
 {
-    public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public required string FirstName { get; set; }
     public required string LastName { get; set; }

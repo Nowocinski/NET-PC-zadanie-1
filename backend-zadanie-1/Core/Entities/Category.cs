@@ -1,7 +1,6 @@
 namespace Core.Entities;
 
-public class Category
+public class Category : BaseEntity
 {
-    public Guid Id { get; set; }
     public required string Name { get; set; }
 }
