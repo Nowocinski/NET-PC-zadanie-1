@@ -33,6 +33,19 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 
+// Seed admin user
+using (var scope = app.Services.CreateScope())
+{
+    var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+    var adminEmail = "admin@netpc.pl";
+    
+    var existingAdmin = await userRepository.GetByEmailAsync(adminEmail);
+    if (existingAdmin == null)
+    {
+        await userRepository.RegisterAsync(adminEmail, "**TSCBf2hS**", "Administrator");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
