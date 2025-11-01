@@ -114,6 +114,11 @@ export class ContactsComponent implements OnInit {
     this.router.navigate(['/login']);
   }
 
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
   showEditContactForm(contact: Contact) {
     this.editingContact.set(contact);
     // Find category and subcategory IDs based on names

@@ -1,9 +1,13 @@
 <div>
-  @if (!isAuthenticated()) {
-    <button (click)="goToLogin()">Go to Login</button>
-  }
-
-  <h2>Contacts</h2>
+  <div>
+    <h2>Contacts</h2>
+    @if (isAuthenticated()) {
+      <button (click)="logout()">Logout</button>
+    }
+    @else {
+      <button (click)="goToLogin()">Go to Login</button>
+    }
+  </div>
 
   @if (isAuthenticated()) {
     <button (click)="showAddContactForm()">Add New Contact</button>
