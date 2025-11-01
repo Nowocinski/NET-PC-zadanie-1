@@ -87,6 +87,26 @@ using (var scope = app.Services.CreateScope())
         await dbContext.Categories.AddRangeAsync(categories);
         await dbContext.SaveChangesAsync();
     }
+    
+    // Seed subcategories
+    if (!dbContext.Subcategories.Any())
+    {
+        var official = await dbContext.Categories.SingleOrDefaultAsync(category => category.Name == "Służbowy");
+
+        if (official == null)
+        {
+            return;
+        }
+        
+        var subcategories = new[]
+        {
+            new Core.Entities.Subcategory { Id = Guid.NewGuid(), Name = "Szef", CategoryId = official.Id },
+            new Core.Entities.Subcategory { Id = Guid.NewGuid(), Name = "klient", CategoryId = official.Id }
+        };
+        
+        await dbContext.Subcategories.AddRangeAsync(subcategories);
+        await dbContext.SaveChangesAsync();
+    }
 }
 
 // Configure the HTTP request pipeline.
