@@ -89,3 +89,14 @@ Po pierwszym uruchomieniu aplikacji zostanie utworzone konto administratora:
 - **Dynamiczne tworzenie subkategorii** dla kategorii "Inny"
 - **Filtrowanie subkategorii** według wybranej kategorii
 - **Wylogowanie** z czyszczeniem sesji
+
+## Zrzuty ekranu
+
+### Strona logowania
+![Strona logowania](screenshots/login.png)
+
+### Lista kontaktów z formularzem edycji
+![Lista kontaktów z edycją](screenshots/contacts-edit.png)
+
+### Szczegóły kontaktu
+![Szczegóły kontaktu](screenshots/contact-details.png)
