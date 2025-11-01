@@ -14,7 +14,7 @@ Struktura plików projektu:
   - **login** - komponent strony logowania
   - **services** - posiada serwisy do autoryzacji oraz pobierania kontaktów z ich kategoriami i subkategoriami
 
-## Installation
+## Instalacja
 
 Aplikacja korzysta z wersji Angulara 20.3, .NET w wersji 9.0 oraz PostgreSQL 2.8.2.
 
