@@ -57,6 +57,7 @@ builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IContactRepository, ContactRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ISubcategoryRepository, SubcategoryRepository>();
 
 var app = builder.Build();
 
@@ -154,6 +155,15 @@ app.MapGet("/api/categories", async (ICategoryRepository categoryRepository) =>
     return Results.Ok(categories);
 })
 .WithName("GetCategories")
+.WithOpenApi();
+
+// Subcategory endpoints
+app.MapGet("/api/subcategories", async (ISubcategoryRepository subcategoryRepository) =>
+{
+    var subcategories = await subcategoryRepository.GetAllAsync();
+    return Results.Ok(subcategories);
+})
+.WithName("GetSubcategories")
 .WithOpenApi();
 
 // Contact endpoints
