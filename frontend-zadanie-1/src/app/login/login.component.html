@@ -1,9 +1,9 @@
 <div>
   <h2>Login</h2>
   
-  @if (errorMessage) {
+  @if (errorMessage()) {
     <div>
-      <p>{{ errorMessage }}</p>
+      <p>{{ errorMessage() }}</p>
     </div>
   }
   
@@ -15,7 +15,7 @@
         id="email" 
         name="email" 
         [(ngModel)]="email" 
-        [disabled]="isLoading"
+        [disabled]="isLoading()"
         required
       />
     </div>
@@ -27,13 +27,13 @@
         id="password" 
         name="password" 
         [(ngModel)]="password" 
-        [disabled]="isLoading"
+        [disabled]="isLoading()"
         required
       />
     </div>
     
-    <button type="submit" [disabled]="isLoading">
-      {{ isLoading ? 'Loading...' : 'Login' }}
+    <button type="submit" [disabled]="isLoading()">
+      {{ isLoading() ? 'Loading...' : 'Login' }}
     </button>
   </form>
 </div>
