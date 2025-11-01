@@ -9,8 +9,6 @@ public class ContactRepository(ApplicationDbContext context) : IContactRepositor
 {
     public async Task<IEnumerable<Contact>> GetAllAsync() =>
         await context.Contacts
-            .Include(c => c.Category)
-            .Include(c => c.Subcategory)
             .ToListAsync();
 
     public async Task<Contact> AddAsync(Contact contact)
