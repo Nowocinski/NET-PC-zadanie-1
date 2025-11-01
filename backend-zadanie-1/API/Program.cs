@@ -174,7 +174,14 @@ app.MapPost("/api/subcategories", async (CreateSubcategoryRequest request, ISubc
     if (subcategory == null)
         return Results.BadRequest(new { message = "Category not found" });
     
-    return Results.Created($"/api/subcategories/{subcategory.Id}", subcategory);
+    var response = new
+    {
+        id = subcategory.Id,
+        name = subcategory.Name,
+        categoryId = subcategory.CategoryId
+    };
+    
+    return Results.Created($"/api/subcategories/{subcategory.Id}", response);
 })
 .RequireAuthorization()
 .WithName("CreateSubcategory")
