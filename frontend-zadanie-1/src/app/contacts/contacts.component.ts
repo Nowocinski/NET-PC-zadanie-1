@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Contact, ContactService, CreateContactRequest, UpdateContactRequest } from '../services/contact.service';
 import { AuthService } from '../services/auth.service';
 import { Category, CategoryService } from '../services/category.service';
-import { Subcategory, SubcategoryService } from '../services/subcategory.service';
+import { Subcategory, SubcategoryService, CreateSubcategoryRequest } from '../services/subcategory.service';
 
 @Component({
   selector: 'app-contacts',
@@ -32,7 +32,8 @@ export class ContactsComponent implements OnInit {
     birthDate: '',
     password: '',
     categoryId: '',
-    subcategoryId: ''
+    subcategoryId: '',
+    newSubcategoryName: ''
   };
 
   editContactData = {
@@ -43,7 +44,8 @@ export class ContactsComponent implements OnInit {
     birthDate: '',
     password: '',
     categoryId: '',
-    subcategoryId: ''
+    subcategoryId: '',
+    newSubcategoryName: ''
   };
 
   constructor(
@@ -122,7 +124,8 @@ export class ContactsComponent implements OnInit {
       birthDate: contact.birthDate.split('T')[0], // Convert to YYYY-MM-DD format
       password: '',
       categoryId: contact.categoryId || '',
-      subcategoryId: contact.subcategoryId || ''
+      subcategoryId: contact.subcategoryId || '',
+      newSubcategoryName: ''
     };
     this.showEditForm.set(true);
   }
@@ -130,6 +133,11 @@ export class ContactsComponent implements OnInit {
   isSluzbowyCategory(categoryId: string): boolean {
     const category = this.categories().find(c => c.id === categoryId);
     return category?.name === 'Służbowy';
+  }
+
+  isInnyCategory(categoryId: string): boolean {
+    const category = this.categories().find(c => c.id === categoryId);
+    return category?.name === 'Inny';
   }
 
   hideEditContactForm() {
@@ -141,6 +149,13 @@ export class ContactsComponent implements OnInit {
     const contact = this.editingContact();
     if (!contact) return;
 
+    const categoryId = this.editContactData.categoryId && this.editContactData.categoryId.trim() !== '' 
+      ? this.editContactData.categoryId 
+      : undefined;
+    const subcategoryId = this.editContactData.subcategoryId && this.editContactData.subcategoryId.trim() !== '' 
+      ? this.editContactData.subcategoryId 
+      : undefined;
+
     const request: UpdateContactRequest = {
       userId: contact.userId,
       firstName: this.editContactData.firstName,
@@ -149,8 +164,8 @@ export class ContactsComponent implements OnInit {
       phone: this.editContactData.phone,
       birthDate: this.editContactData.birthDate,
       password: this.editContactData.password,
-      categoryId: this.editContactData.categoryId ? this.editContactData.categoryId : undefined,
-      subcategoryId: this.editContactData.subcategoryId ? this.editContactData.subcategoryId : undefined
+      categoryId: categoryId,
+      subcategoryId: subcategoryId
     };
 
     this.contactService.updateContact(contact.id, request).subscribe({
@@ -213,11 +228,41 @@ export class ContactsComponent implements OnInit {
       birthDate: '',
       password: '',
       categoryId: '',
-      subcategoryId: ''
+      subcategoryId: '',
+      newSubcategoryName: ''
     };
   }
 
   addContact() {
+    // If "Inny" category is selected and new subcategory name is provided, create it first
+    if (this.isInnyCategory(this.newContact.categoryId) && this.newContact.newSubcategoryName) {
+      const categoryName = this.categories().find(c => c.id === this.newContact.categoryId)?.name;
+      if (!categoryName) return;
+
+      const subcategoryRequest: CreateSubcategoryRequest = {
+        subcategoryName: this.newContact.newSubcategoryName,
+        categoryName: categoryName
+      };
+
+      this.subcategoryService.createSubcategory(subcategoryRequest).subscribe({
+        next: (subcategory) => {
+          // Use the newly created subcategory
+          this.createContactWithData(subcategory.id);
+        },
+        error: (error) => {
+          this.errorMessage.set('Failed to create subcategory');
+          console.error('Subcategory creation failed', error);
+        }
+      });
+    } else {
+      const subcategoryId = this.newContact.subcategoryId && this.newContact.subcategoryId.trim() !== '' 
+        ? this.newContact.subcategoryId 
+        : undefined;
+      this.createContactWithData(subcategoryId);
+    }
+  }
+
+  private createContactWithData(subcategoryId?: string) {
     const request: CreateContactRequest = {
       firstName: this.newContact.firstName,
       lastName: this.newContact.lastName,
@@ -226,7 +271,7 @@ export class ContactsComponent implements OnInit {
       birthDate: this.newContact.birthDate,
       password: this.newContact.password,
       categoryId: this.newContact.categoryId ? this.newContact.categoryId : undefined,
-      subcategoryId: this.newContact.subcategoryId ? this.newContact.subcategoryId : undefined
+      subcategoryId: subcategoryId
     };
 
     this.contactService.createContact(request).subscribe({

@@ -8,6 +8,11 @@ export interface Subcategory {
   categoryId: string;
 }
 
+export interface CreateSubcategoryRequest {
+  subcategoryName: string;
+  categoryName: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,5 +24,9 @@ export class SubcategoryService {
   getSubcategoriesByCategoryName(categoryName: string): Observable<Subcategory[]> {
     const params = new HttpParams().set('name', categoryName);
     return this.http.get<Subcategory[]>(this.apiUrl, { params });
+  }
+
+  createSubcategory(request: CreateSubcategoryRequest): Observable<Subcategory> {
+    return this.http.post<Subcategory>(this.apiUrl, request);
   }
 }
