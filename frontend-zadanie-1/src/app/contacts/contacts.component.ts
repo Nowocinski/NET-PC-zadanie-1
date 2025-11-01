@@ -31,7 +31,8 @@ export class ContactsComponent implements OnInit {
     phone: '',
     birthDate: '',
     password: '',
-    categoryId: ''
+    categoryId: '',
+    subcategoryId: ''
   };
 
   editContactData = {
@@ -41,7 +42,8 @@ export class ContactsComponent implements OnInit {
     phone: '',
     birthDate: '',
     password: '',
-    categoryId: ''
+    categoryId: '',
+    subcategoryId: ''
   };
 
   constructor(
@@ -119,9 +121,15 @@ export class ContactsComponent implements OnInit {
       phone: contact.phone,
       birthDate: contact.birthDate.split('T')[0], // Convert to YYYY-MM-DD format
       password: '',
-      categoryId: contact.categoryId || ''
+      categoryId: contact.categoryId || '',
+      subcategoryId: contact.subcategoryId || ''
     };
     this.showEditForm.set(true);
+  }
+
+  isSluzbowyCategory(categoryId: string): boolean {
+    const category = this.categories().find(c => c.id === categoryId);
+    return category?.name === 'Służbowy';
   }
 
   hideEditContactForm() {
@@ -141,7 +149,8 @@ export class ContactsComponent implements OnInit {
       phone: this.editContactData.phone,
       birthDate: this.editContactData.birthDate,
       password: this.editContactData.password,
-      categoryId: this.editContactData.categoryId ? this.editContactData.categoryId : undefined
+      categoryId: this.editContactData.categoryId ? this.editContactData.categoryId : undefined,
+      subcategoryId: this.editContactData.subcategoryId ? this.editContactData.subcategoryId : undefined
     };
 
     this.contactService.updateContact(contact.id, request).subscribe({
@@ -203,7 +212,8 @@ export class ContactsComponent implements OnInit {
       phone: '',
       birthDate: '',
       password: '',
-      categoryId: ''
+      categoryId: '',
+      subcategoryId: ''
     };
   }
 
@@ -215,7 +225,8 @@ export class ContactsComponent implements OnInit {
       phone: this.newContact.phone,
       birthDate: this.newContact.birthDate,
       password: this.newContact.password,
-      categoryId: this.newContact.categoryId ? this.newContact.categoryId : undefined
+      categoryId: this.newContact.categoryId ? this.newContact.categoryId : undefined,
+      subcategoryId: this.newContact.subcategoryId ? this.newContact.subcategoryId : undefined
     };
 
     this.contactService.createContact(request).subscribe({

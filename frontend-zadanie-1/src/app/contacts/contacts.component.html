@@ -52,7 +52,19 @@
             }
           </select>
         </div>
-
+        
+        @if (isSluzbowyCategory(newContact.categoryId)) {
+          <div>
+            <label for="subcategory">Subcategory:</label>
+            <select id="subcategory" name="subcategory" [(ngModel)]="newContact.subcategoryId">
+              <option value="">-- Select Subcategory --</option>
+              @for (subcategory of subcategories(); track subcategory.id) {
+                <option [value]="subcategory.id">{{ subcategory.name }}</option>
+              }
+            </select>
+          </div>
+        }
+        
         <button type="submit">Save</button>
         <button type="button" (click)="hideAddContactForm()">Cancel</button>
       </form>
@@ -102,7 +114,19 @@
             }
           </select>
         </div>
-
+        
+        @if (isSluzbowyCategory(editContactData.categoryId)) {
+          <div>
+            <label for="editSubcategory">Subcategory:</label>
+            <select id="editSubcategory" name="editSubcategory" [(ngModel)]="editContactData.subcategoryId">
+              <option value="">-- Select Subcategory --</option>
+              @for (subcategory of subcategories(); track subcategory.id) {
+                <option [value]="subcategory.id">{{ subcategory.name }}</option>
+              }
+            </select>
+          </div>
+        }
+        
         <button type="submit">Update</button>
         <button type="button" (click)="hideEditContactForm()">Cancel</button>
       </form>
