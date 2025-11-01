@@ -149,6 +149,18 @@ app.MapPost("/api/auth/register", async (RegisterRequest request, IUserRepositor
 .WithName("Register")
 .WithOpenApi();
 
+app.MapPost("/api/auth/refresh", async (RefreshTokenRequest request, IUserRepository userRepository) =>
+{
+    var tokens = await userRepository.RefreshTokensAsync(request.AccessToken, request.RefreshToken);
+    
+    if (!tokens.HasValue)
+        return Results.Unauthorized();
+    
+    return Results.Ok(new LoginResponse(tokens.Value.accessToken, tokens.Value.refreshToken));
+})
+.WithName("RefreshToken")
+.WithOpenApi();
+
 // Category endpoints
 app.MapGet("/api/categories", async (ICategoryRepository categoryRepository) =>
 {
@@ -284,6 +296,7 @@ app.Run();
 
 record LoginRequest(string Email, string Password);
 record LoginResponse(string AccessToken, string RefreshToken);
+record RefreshTokenRequest(string AccessToken, string RefreshToken);
 record RegisterRequest(string Email, string Password, string Name);
 record RegisterResponse(Guid Id, string Email, string Name);
 record CreateContactRequest(string FirstName, string LastName, string Email, string Phone, DateTime BirthDate, Guid? CategoryId, Guid? SubcategoryId, string Password);

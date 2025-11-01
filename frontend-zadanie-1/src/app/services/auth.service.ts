@@ -12,6 +12,11 @@ export interface LoginResponse {
   refreshToken: string;
 }
 
+export interface RefreshTokenRequest {
+  accessToken: string;
+  refreshToken: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -23,6 +28,18 @@ export class AuthService {
   login(email: string, password: string): Observable<LoginResponse> {
     const request: LoginRequest = { email, password };
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request);
+  }
+
+  refreshToken(): Observable<LoginResponse> {
+    const accessToken = this.getAccessToken();
+    const refreshToken = this.getRefreshToken();
+    
+    if (!accessToken || !refreshToken) {
+      throw new Error('No tokens available');
+    }
+
+    const request: RefreshTokenRequest = { accessToken, refreshToken };
+    return this.http.post<LoginResponse>(`${this.apiUrl}/refresh`, request);
   }
 
   saveTokens(accessToken: string, refreshToken: string): void {

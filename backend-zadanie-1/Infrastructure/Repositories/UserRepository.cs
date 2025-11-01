@@ -13,6 +13,9 @@ public class UserRepository(ApplicationDbContext context, JwtTokenService tokenS
             .Include(u => u.Contacts)
             .FirstOrDefaultAsync(u => u.Email == email);
 
+    public async Task<User?> GetByIdAsync(Guid id) =>
+        await context.Users.FindAsync(id);
+
     public async Task<(string accessToken, string refreshToken)?> GenerateTokensAsync(string email, string password)
     {
         var user = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
@@ -28,6 +31,30 @@ public class UserRepository(ApplicationDbContext context, JwtTokenService tokenS
         var refreshToken = tokenService.GenerateRefreshToken();
 
         return (accessToken, refreshToken);
+    }
+
+    public async Task<(string accessToken, string refreshToken)?> RefreshTokensAsync(string accessToken, string refreshToken)
+    {
+        // Validate the access token (without checking expiration)
+        var principal = tokenService.ValidateToken(accessToken);
+        if (principal == null)
+            return null;
+
+        // Get user ID from token claims
+        var userIdClaim = principal.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+            return null;
+
+        // Get user from database
+        var user = await GetByIdAsync(userId);
+        if (user == null)
+            return null;
+
+        // Generate new tokens
+        var newAccessToken = tokenService.GenerateAccessToken(user);
+        var newRefreshToken = tokenService.GenerateRefreshToken();
+
+        return (newAccessToken, newRefreshToken);
     }
 
     public async Task<User?> RegisterAsync(string email, string password, string name)
