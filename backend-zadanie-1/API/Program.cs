@@ -167,6 +167,19 @@ app.MapGet("/api/subcategories", async ([AsParameters] GetSubcategoriesRequest r
 .WithName("GetSubcategories")
 .WithOpenApi();
 
+app.MapPost("/api/subcategories", async (CreateSubcategoryRequest request, ISubcategoryRepository subcategoryRepository) =>
+{
+    var subcategory = await subcategoryRepository.AddAsync(request.SubcategoryName, request.CategoryName);
+    
+    if (subcategory == null)
+        return Results.BadRequest(new { message = "Category not found" });
+    
+    return Results.Created($"/api/subcategories/{subcategory.Id}", subcategory);
+})
+.RequireAuthorization()
+.WithName("CreateSubcategory")
+.WithOpenApi();
+
 // Contact endpoints
 app.MapGet("/api/contacts", async (IContactRepository contactRepository) =>
 {
@@ -244,3 +257,4 @@ record RegisterResponse(Guid Id, string Email, string Name);
 record CreateContactRequest(string FirstName, string LastName, string Email, string Phone, DateTime BirthDate, Guid? CategoryId, Guid? SubcategoryId, string Password);
 record UpdateContactRequest(Guid UserId, string FirstName, string LastName, string Email, string Phone, DateTime BirthDate, Guid? CategoryId, Guid? SubcategoryId, string Password);
 record GetSubcategoriesRequest(string Name);
+record CreateSubcategoryRequest(string SubcategoryName, string CategoryName);

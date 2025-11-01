@@ -11,4 +11,25 @@ public class SubcategoryRepository(ApplicationDbContext context) : ISubcategoryR
         await context.Subcategories
             .Where(s => s.Category != null && s.Category.Name == name)
             .ToListAsync();
+
+    public async Task<Subcategory?> AddAsync(string subcategoryName, string categoryName)
+    {
+        var category = await context.Categories
+            .FirstOrDefaultAsync(c => c.Name == categoryName);
+
+        if (category == null)
+            return null;
+
+        var subcategory = new Subcategory
+        {
+            Id = Guid.NewGuid(),
+            Name = subcategoryName,
+            CategoryId = category.Id
+        };
+
+        await context.Subcategories.AddAsync(subcategory);
+        await context.SaveChangesAsync();
+
+        return subcategory;
+    }
 }
