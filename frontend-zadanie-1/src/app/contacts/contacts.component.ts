@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Contact, ContactService, CreateContactRequest, UpdateContactRequest } from '../services/contact.service';
 import { AuthService } from '../services/auth.service';
 import { Category, CategoryService } from '../services/category.service';
+import { Subcategory, SubcategoryService } from '../services/subcategory.service';
 
 @Component({
   selector: 'app-contacts',
@@ -14,6 +15,7 @@ import { Category, CategoryService } from '../services/category.service';
 export class ContactsComponent implements OnInit {
   contacts = signal<Contact[]>([]);
   categories = signal<Category[]>([]);
+  subcategories = signal<Subcategory[]>([]);
   isLoading = signal(false);
   errorMessage = signal('');
   selectedContact = signal<Contact | null>(null);
@@ -46,13 +48,15 @@ export class ContactsComponent implements OnInit {
     private readonly contactService: ContactService,
     private readonly router: Router,
     private readonly authService: AuthService,
-    private readonly categoryService: CategoryService
+    private readonly categoryService: CategoryService,
+    private readonly subcategoryService: SubcategoryService
   ) {}
 
   ngOnInit() {
     this.isAuthenticated.set(this.authService.isAuthenticated());
     this.loadContacts();
     this.loadCategories();
+    this.loadSubcategories();
   }
 
   loadCategories() {
@@ -62,6 +66,17 @@ export class ContactsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading categories', error);
+      }
+    });
+  }
+
+  loadSubcategories() {
+    this.subcategoryService.getSubcategoriesByCategoryName('Służbowy').subscribe({
+      next: (subcategories) => {
+        this.subcategories.set(subcategories);
+      },
+      error: (error) => {
+        console.error('Error loading subcategories', error);
       }
     });
   }
