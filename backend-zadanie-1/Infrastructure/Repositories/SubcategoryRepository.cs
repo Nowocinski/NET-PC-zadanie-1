@@ -7,14 +7,9 @@ namespace Infrastructure.Repositories;
 
 public class SubcategoryRepository(ApplicationDbContext context) : ISubcategoryRepository
 {
-    public async Task<IEnumerable<Subcategory>> GetAllAsync() =>
+    public async Task<IEnumerable<Subcategory>> GetByCategoryNameAsync(string name) =>
         await context.Subcategories
             .Include(s => s.Category)
-            .ToListAsync();
-
-    public async Task<IEnumerable<Subcategory>> GetByCategoryIdAsync(Guid categoryId) =>
-        await context.Subcategories
-            .Include(s => s.Category)
-            .Where(s => s.CategoryId == categoryId)
+            .Where(s => s.Category != null && s.Category.Name == name)
             .ToListAsync();
 }

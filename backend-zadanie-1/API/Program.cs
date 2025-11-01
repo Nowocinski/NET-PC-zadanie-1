@@ -158,9 +158,9 @@ app.MapGet("/api/categories", async (ICategoryRepository categoryRepository) =>
 .WithOpenApi();
 
 // Subcategory endpoints
-app.MapGet("/api/subcategories", async (ISubcategoryRepository subcategoryRepository) =>
+app.MapGet("/api/subcategories", async (GetSubcategoriesRequest request, ISubcategoryRepository subcategoryRepository) =>
 {
-    var subcategories = await subcategoryRepository.GetAllAsync();
+    var subcategories = await subcategoryRepository.GetByCategoryNameAsync(request.Name);
     return Results.Ok(subcategories);
 })
 .WithName("GetSubcategories")
@@ -242,3 +242,4 @@ record RegisterRequest(string Email, string Password, string Name);
 record RegisterResponse(Guid Id, string Email, string Name);
 record CreateContactRequest(string FirstName, string LastName, string Email, string Phone, DateTime BirthDate, Guid? CategoryId, Guid? SubcategoryId, string Password);
 record UpdateContactRequest(Guid UserId, string FirstName, string LastName, string Email, string Phone, DateTime BirthDate, Guid? CategoryId, Guid? SubcategoryId, string Password);
+record GetSubcategoriesRequest(string Name);
