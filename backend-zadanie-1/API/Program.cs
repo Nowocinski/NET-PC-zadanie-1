@@ -5,6 +5,7 @@ using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -158,7 +159,7 @@ app.MapGet("/api/categories", async (ICategoryRepository categoryRepository) =>
 .WithOpenApi();
 
 // Subcategory endpoints
-app.MapGet("/api/subcategories", async (GetSubcategoriesRequest request, ISubcategoryRepository subcategoryRepository) =>
+app.MapGet("/api/subcategories", async ([AsParameters] GetSubcategoriesRequest request, ISubcategoryRepository subcategoryRepository) =>
 {
     var subcategories = await subcategoryRepository.GetByCategoryNameAsync(request.Name);
     return Results.Ok(subcategories);
