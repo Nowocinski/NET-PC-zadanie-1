@@ -27,6 +27,9 @@ public class SubcategoryRepository(ApplicationDbContext context) : ISubcategoryR
             CategoryId = category.Id
         };
 
+        if (await context.Subcategories.AnyAsync(s => s.Name == subcategoryName && s.CategoryId == category.Id))
+            return subcategory;
+
         await context.Subcategories.AddAsync(subcategory);
         await context.SaveChangesAsync();
 
