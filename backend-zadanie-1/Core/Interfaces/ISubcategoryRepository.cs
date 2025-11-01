@@ -4,6 +4,7 @@ namespace Core.Interfaces;
 
 public interface ISubcategoryRepository
 {
+    Task<IEnumerable<Subcategory>> GetAllAsync();
     Task<IEnumerable<Subcategory>> GetByCategoryNameAsync(string name);
     Task<Subcategory?> AddAsync(string subcategoryName, string categoryName);
 }

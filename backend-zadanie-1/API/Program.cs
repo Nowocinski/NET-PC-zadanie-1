@@ -188,10 +188,35 @@ app.MapPost("/api/subcategories", async (CreateSubcategoryRequest request, ISubc
 .WithOpenApi();
 
 // Contact endpoints
-app.MapGet("/api/contacts", async (IContactRepository contactRepository) =>
+app.MapGet("/api/contacts", async (IContactRepository contactRepository, ICategoryRepository categoryRepository, ISubcategoryRepository subcategoryRepository) =>
 {
     var contacts = await contactRepository.GetAllAsync();
-    return Results.Ok(contacts);
+    var categories = await categoryRepository.GetAllAsync();
+    var subcategories = await subcategoryRepository.GetAllAsync();
+    
+    var contactDtos = contacts.Select(c =>
+    {
+        var category = categories.FirstOrDefault(cat => cat.Id == c.CategoryId);
+        var subcategory = c.SubcategoryId.HasValue 
+            ? subcategories.FirstOrDefault(sub => sub.Id == c.SubcategoryId.Value)
+            : null;
+            
+        return new
+        {
+            c.Id,
+            c.UserId,
+            c.FirstName,
+            c.LastName,
+            c.Email,
+            c.Phone,
+            c.BirthDate,
+            c.Password,
+            CategoryName = category?.Name,
+            SubcategoryName = subcategory?.Name
+        };
+    });
+    
+    return Results.Ok(contactDtos);
 })
 .WithName("GetContacts")
 .WithOpenApi();

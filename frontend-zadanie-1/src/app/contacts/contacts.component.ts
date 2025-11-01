@@ -116,6 +116,10 @@ export class ContactsComponent implements OnInit {
 
   showEditContactForm(contact: Contact) {
     this.editingContact.set(contact);
+    // Find category and subcategory IDs based on names
+    const category = this.categories().find(c => c.name === contact.categoryName);
+    const subcategory = this.subcategories().find(s => s.name === contact.subcategoryName);
+    
     this.editContactData = {
       firstName: contact.firstName,
       lastName: contact.lastName,
@@ -123,8 +127,8 @@ export class ContactsComponent implements OnInit {
       phone: contact.phone,
       birthDate: contact.birthDate.split('T')[0], // Convert to YYYY-MM-DD format
       password: '',
-      categoryId: contact.categoryId || '',
-      subcategoryId: contact.subcategoryId || '',
+      categoryId: category?.id || '',
+      subcategoryId: subcategory?.id || '',
       newSubcategoryName: ''
     };
     this.showEditForm.set(true);

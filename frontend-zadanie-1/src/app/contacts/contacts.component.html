@@ -185,11 +185,11 @@
       <p><strong>Phone:</strong> {{ selectedContact()!.phone }}</p>
       <p><strong>Birth Date:</strong> {{ selectedContact()!.birthDate }}</p>
       <p><strong>User ID:</strong> {{ selectedContact()!.userId }}</p>
-      @if (selectedContact()!.categoryId) {
-        <p><strong>Category ID:</strong> {{ selectedContact()!.categoryId }}</p>
+      @if (selectedContact()!.categoryName) {
+        <p><strong>Category:</strong> {{ selectedContact()!.categoryName }}</p>
       }
-      @if (selectedContact()!.subcategoryId) {
-        <p><strong>Subcategory ID:</strong> {{ selectedContact()!.subcategoryId }}</p>
+      @if (selectedContact()!.subcategoryName) {
+        <p><strong>Subcategory:</strong> {{ selectedContact()!.subcategoryName }}</p>
       }
       <button (click)="closeDetails()">Close</button>
     </div>

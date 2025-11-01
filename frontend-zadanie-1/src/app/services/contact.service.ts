@@ -10,8 +10,9 @@ export interface Contact {
   email: string;
   phone: string;
   birthDate: string;
-  categoryId?: string;
-  subcategoryId?: string;
+  password: string;
+  categoryName?: string;
+  subcategoryName?: string;
 }
 
 export interface CreateContactRequest {
