@@ -9,7 +9,6 @@ public class SubcategoryRepository(ApplicationDbContext context) : ISubcategoryR
 {
     public async Task<IEnumerable<Subcategory>> GetByCategoryNameAsync(string name) =>
         await context.Subcategories
-            .Include(s => s.Category)
             .Where(s => s.Category != null && s.Category.Name == name)
             .ToListAsync();
 }
