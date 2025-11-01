@@ -149,11 +149,37 @@ export class ContactsComponent implements OnInit {
     const contact = this.editingContact();
     if (!contact) return;
 
+    // If "Inny" category is selected and new subcategory name is provided, create it first
+    if (this.isInnyCategory(this.editContactData.categoryId) && this.editContactData.newSubcategoryName) {
+      const categoryName = this.categories().find(c => c.id === this.editContactData.categoryId)?.name;
+      if (!categoryName) return;
+
+      const subcategoryRequest: CreateSubcategoryRequest = {
+        subcategoryName: this.editContactData.newSubcategoryName,
+        categoryName: categoryName
+      };
+
+      this.subcategoryService.createSubcategory(subcategoryRequest).subscribe({
+        next: (subcategory) => {
+          // Use the newly created subcategory
+          this.updateContactWithData(contact, subcategory.id);
+        },
+        error: (error) => {
+          this.errorMessage.set('Failed to create subcategory');
+          console.error('Subcategory creation failed', error);
+        }
+      });
+    } else {
+      const subcategoryId = this.editContactData.subcategoryId && this.editContactData.subcategoryId.trim() !== '' 
+        ? this.editContactData.subcategoryId 
+        : undefined;
+      this.updateContactWithData(contact, subcategoryId);
+    }
+  }
+
+  private updateContactWithData(contact: Contact, subcategoryId?: string) {
     const categoryId = this.editContactData.categoryId && this.editContactData.categoryId.trim() !== '' 
       ? this.editContactData.categoryId 
-      : undefined;
-    const subcategoryId = this.editContactData.subcategoryId && this.editContactData.subcategoryId.trim() !== '' 
-      ? this.editContactData.subcategoryId 
       : undefined;
 
     const request: UpdateContactRequest = {

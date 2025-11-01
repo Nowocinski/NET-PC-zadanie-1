@@ -133,6 +133,13 @@
             </select>
           </div>
         }
+
+        @if (isInnyCategory(editContactData.categoryId)) {
+          <div>
+            <label for="editNewSubcategory">New Subcategory Name:</label>
+            <input type="text" id="editNewSubcategory" name="editNewSubcategory" [(ngModel)]="editContactData.newSubcategoryName" placeholder="Enter subcategory name" />
+          </div>
+        }
         
         <button type="submit">Update</button>
         <button type="button" (click)="hideEditContactForm()">Cancel</button>
