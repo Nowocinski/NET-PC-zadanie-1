@@ -20,15 +20,16 @@ public class SubcategoryRepository(ApplicationDbContext context) : ISubcategoryR
         if (category == null)
             return null;
 
+        var existingSubcategory = await context.Subcategories.SingleOrDefaultAsync(s => s.Name == subcategoryName && s.CategoryId == category.Id);
+        if (existingSubcategory != null)
+            return existingSubcategory;
+
         var subcategory = new Subcategory
         {
             Id = Guid.NewGuid(),
             Name = subcategoryName,
             CategoryId = category.Id
         };
-
-        if (await context.Subcategories.AnyAsync(s => s.Name == subcategoryName && s.CategoryId == category.Id))
-            return subcategory;
 
         await context.Subcategories.AddAsync(subcategory);
         await context.SaveChangesAsync();
