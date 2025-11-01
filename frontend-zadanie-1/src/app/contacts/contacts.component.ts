@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Contact, ContactService, CreateContactRequest, UpdateContactRequest } from '../services/contact.service';
 import { AuthService } from '../services/auth.service';
+import { Category, CategoryService } from '../services/category.service';
 
 @Component({
   selector: 'app-contacts',
@@ -12,6 +13,7 @@ import { AuthService } from '../services/auth.service';
 })
 export class ContactsComponent implements OnInit {
   contacts = signal<Contact[]>([]);
+  categories = signal<Category[]>([]);
   isLoading = signal(false);
   errorMessage = signal('');
   selectedContact = signal<Contact | null>(null);
@@ -26,7 +28,8 @@ export class ContactsComponent implements OnInit {
     email: '',
     phone: '',
     birthDate: '',
-    password: ''
+    password: '',
+    categoryId: ''
   };
 
   editContactData = {
@@ -35,18 +38,32 @@ export class ContactsComponent implements OnInit {
     email: '',
     phone: '',
     birthDate: '',
-    password: ''
+    password: '',
+    categoryId: ''
   };
 
   constructor(
     private readonly contactService: ContactService,
     private readonly router: Router,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly categoryService: CategoryService
   ) {}
 
   ngOnInit() {
     this.isAuthenticated.set(this.authService.isAuthenticated());
     this.loadContacts();
+    this.loadCategories();
+  }
+
+  loadCategories() {
+    this.categoryService.getCategories().subscribe({
+      next: (categories) => {
+        this.categories.set(categories);
+      },
+      error: (error) => {
+        console.error('Error loading categories', error);
+      }
+    });
   }
 
   loadContacts() {
@@ -86,7 +103,8 @@ export class ContactsComponent implements OnInit {
       email: contact.email,
       phone: contact.phone,
       birthDate: contact.birthDate.split('T')[0], // Convert to YYYY-MM-DD format
-      password: ''
+      password: '',
+      categoryId: contact.categoryId || ''
     };
     this.showEditForm.set(true);
   }
@@ -107,7 +125,8 @@ export class ContactsComponent implements OnInit {
       email: this.editContactData.email,
       phone: this.editContactData.phone,
       birthDate: this.editContactData.birthDate,
-      password: this.editContactData.password
+      password: this.editContactData.password,
+      categoryId: this.editContactData.categoryId ? this.editContactData.categoryId : undefined
     };
 
     this.contactService.updateContact(contact.id, request).subscribe({
@@ -168,7 +187,8 @@ export class ContactsComponent implements OnInit {
       email: '',
       phone: '',
       birthDate: '',
-      password: ''
+      password: '',
+      categoryId: ''
     };
   }
 
@@ -179,7 +199,8 @@ export class ContactsComponent implements OnInit {
       email: this.newContact.email,
       phone: this.newContact.phone,
       birthDate: this.newContact.birthDate,
-      password: this.newContact.password
+      password: this.newContact.password,
+      categoryId: this.newContact.categoryId ? this.newContact.categoryId : undefined
     };
 
     this.contactService.createContact(request).subscribe({

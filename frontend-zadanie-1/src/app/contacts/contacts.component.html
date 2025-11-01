@@ -43,6 +43,16 @@
           <input type="password" id="password" name="password" [(ngModel)]="newContact.password" required />
         </div>
         
+        <div>
+          <label for="category">Category:</label>
+          <select id="category" name="category" [(ngModel)]="newContact.categoryId">
+            <option value="">-- Select Category --</option>
+            @for (category of categories(); track category.id) {
+              <option [value]="category.id">{{ category.name }}</option>
+            }
+          </select>
+        </div>
+        
         <button type="submit">Save</button>
         <button type="button" (click)="hideAddContactForm()">Cancel</button>
       </form>
@@ -81,6 +91,16 @@
         <div>
           <label for="editPassword">Password:</label>
           <input type="password" id="editPassword" name="editPassword" [(ngModel)]="editContactData.password" required />
+        </div>
+        
+        <div>
+          <label for="editCategory">Category:</label>
+          <select id="editCategory" name="editCategory" [(ngModel)]="editContactData.categoryId">
+            <option value="">-- Select Category --</option>
+            @for (category of categories(); track category.id) {
+              <option [value]="category.id">{{ category.name }}</option>
+            }
+          </select>
         </div>
         
         <button type="submit">Update</button>
