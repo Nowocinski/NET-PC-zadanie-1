@@ -261,8 +261,15 @@ app.MapPost("/api/contacts", async (CreateContactRequest request, ClaimsPrincipa
         Password = request.Password
     };
     
-    var createdContact = await contactRepository.AddAsync(contact);
-    return Results.Created($"/api/contacts/{createdContact.Id}", createdContact);
+    try
+    {
+        var createdContact = await contactRepository.AddAsync(contact);
+        return Results.Created($"/api/contacts/{createdContact.Id}", createdContact);
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.BadRequest(new { message = ex.Message });
+    }
 })
 .RequireAuthorization()
 .WithName("CreateContact")
@@ -284,8 +291,15 @@ app.MapPut("/api/contacts/{id}", async (Guid id, UpdateContactRequest request, I
         Password = request.Password
     };
     
-    await contactRepository.UpdateAsync(contact);
-    return Results.NoContent();
+    try
+    {
+        await contactRepository.UpdateAsync(contact);
+        return Results.NoContent();
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.BadRequest(new { message = ex.Message });
+    }
 })
 .RequireAuthorization()
 .WithName("UpdateContact")

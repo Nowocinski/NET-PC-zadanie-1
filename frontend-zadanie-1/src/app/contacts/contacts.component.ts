@@ -221,8 +221,12 @@ export class ContactsComponent implements OnInit {
         this.hideEditContactForm();
       },
       error: (error) => {
-        this.errorMessage.set('Failed to update contact');
-        console.error('Update failed', error);
+        console.error('Error updating contact', error);
+        if (error.status === 400 && error.error?.message) {
+          alert(error.error.message);
+        } else {
+          alert('Error updating contact');
+        }
       }
     });
   }
@@ -329,8 +333,12 @@ export class ContactsComponent implements OnInit {
         this.hideAddContactForm();
       },
       error: (error) => {
-        this.errorMessage.set('Failed to create contact');
-        console.error('Create failed', error);
+        console.error('Error creating contact', error);
+        if (error.status === 400 && error.error?.message) {
+          alert(error.error.message);
+        } else {
+          alert('Error creating contact');
+        }
       }
     });
   }
