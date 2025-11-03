@@ -14,6 +14,10 @@ Struktura plików projektu:
   - **login** - komponent strony logowania
   - **services** - posiada serwisy do autoryzacji oraz pobierania kontaktów z ich kategoriami i subkategoriami
 
+## wykorzystane biblioteki
+- backend: Entity Framework Core, Npgsql, JWT Bearer, BCrypt, OpenAPI
+- frontend: domyślne biblioteki Angular
+
 ## Instalacja
 
 ### Wymagania
