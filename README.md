@@ -49,7 +49,7 @@ cd backend-zadanie-1/API
 dotnet restore
 ```
 
-3. Uruchom migracje bazy danych (jeśli są dostępne):
+3. Uruchom migracje bazy danych:
 ```bash
 dotnet ef database update
 ```
