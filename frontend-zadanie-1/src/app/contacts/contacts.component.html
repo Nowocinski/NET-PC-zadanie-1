@@ -44,7 +44,8 @@
 
         <div>
           <label for="password">Password:</label>
-          <input type="password" id="password" name="password" [(ngModel)]="newContact.password" required />
+          <input type="password" id="password" name="password" [(ngModel)]="newContact.password" required minlength="8" />
+          <small>Minimum 8 characters</small>
         </div>
 
         <div>
@@ -113,7 +114,8 @@
 
         <div>
           <label for="editPassword">Password:</label>
-          <input type="password" id="editPassword" name="editPassword" [(ngModel)]="editContactData.password" required />
+          <input type="password" id="editPassword" name="editPassword" [(ngModel)]="editContactData.password" required minlength="8" />
+          <small>Minimum 8 characters</small>
         </div>
 
         <div>

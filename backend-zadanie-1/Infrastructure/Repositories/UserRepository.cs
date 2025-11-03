@@ -63,6 +63,10 @@ public class UserRepository(ApplicationDbContext context, JwtTokenService tokenS
         if (existingUser != null)
             return null;
 
+        // Validate password length (minimum 8 characters)
+        if (password.Length < 8)
+            return null;
+
         // Hash password using BCrypt
         var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
 

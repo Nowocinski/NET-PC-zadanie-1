@@ -158,6 +158,12 @@ export class ContactsComponent implements OnInit {
     const contact = this.editingContact();
     if (!contact) return;
 
+    // Validate password length
+    if (this.editContactData.password.length < 8) {
+      alert('Password must be at least 8 characters long');
+      return;
+    }
+
     // If "Inny" category is selected and new subcategory name is provided, create it first
     if (this.isInnyCategory(this.editContactData.categoryId) && this.editContactData.newSubcategoryName) {
       const categoryName = this.categories().find(c => c.id === this.editContactData.categoryId)?.name;
@@ -269,6 +275,12 @@ export class ContactsComponent implements OnInit {
   }
 
   addContact() {
+    // Validate password length
+    if (this.newContact.password.length < 8) {
+      alert('Password must be at least 8 characters long');
+      return;
+    }
+
     // If "Inny" category is selected and new subcategory name is provided, create it first
     if (this.isInnyCategory(this.newContact.categoryId) && this.newContact.newSubcategoryName) {
       const categoryName = this.categories().find(c => c.id === this.newContact.categoryId)?.name;
