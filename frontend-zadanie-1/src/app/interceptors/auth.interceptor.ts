@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
+/* Interceptor autoryzacji */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const router = inject(Router);

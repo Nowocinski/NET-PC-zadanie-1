@@ -12,6 +12,7 @@ import { Subcategory, SubcategoryService, CreateSubcategoryRequest } from '../se
   imports: [CommonModule, FormsModule],
   templateUrl: './contacts.component.html'
 })
+/* Komponent kontaktów */
 export class ContactsComponent implements OnInit {
   contacts = signal<Contact[]>([]);
   categories = signal<Category[]>([]);
@@ -63,6 +64,7 @@ export class ContactsComponent implements OnInit {
     this.loadSubcategories();
   }
 
+  /* Pobiera kategorie */
   loadCategories() {
     this.categoryService.getCategories().subscribe({
       next: (categories) => {
@@ -74,6 +76,7 @@ export class ContactsComponent implements OnInit {
     });
   }
 
+  /* Pobiera podkategorie */
   loadSubcategories() {
     this.subcategoryService.getSubcategoriesByCategoryName('Służbowy').subscribe({
       next: (subcategories) => {
@@ -85,6 +88,7 @@ export class ContactsComponent implements OnInit {
     });
   }
 
+  /* Pobiera kontakty */
   loadContacts() {
     this.isLoading.set(true);
     this.errorMessage.set('');
@@ -102,23 +106,28 @@ export class ContactsComponent implements OnInit {
     });
   }
 
+  /* Wybiera kontakt */
   selectContact(contact: Contact) {
     this.selectedContact.set(contact);
   }
 
+  /* Zamyka szczegóły kontaktu */
   closeDetails() {
     this.selectedContact.set(null);
   }
 
+  /* Przejdź do logowania */
   goToLogin() {
     this.router.navigate(['/login']);
   }
 
+  /* Wylogowuje użytkownika */
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
 
+  /* Pokazuje formularz edycji kontaktu */
   showEditContactForm(contact: Contact) {
     this.editingContact.set(contact);
     // Find category and subcategory IDs based on names
@@ -139,21 +148,25 @@ export class ContactsComponent implements OnInit {
     this.showEditForm.set(true);
   }
 
+  /* Sprawdza czy kategoria jest 'Służbowy' */
   isSluzbowyCategory(categoryId: string): boolean {
     const category = this.categories().find(c => c.id === categoryId);
     return category?.name === 'Służbowy';
   }
 
+  /* Sprawdza czy kategoria jest 'Inny' */
   isInnyCategory(categoryId: string): boolean {
     const category = this.categories().find(c => c.id === categoryId);
     return category?.name === 'Inny';
   }
 
+  /* Zamyka formularz edycji kontaktu */
   hideEditContactForm() {
     this.showEditForm.set(false);
     this.editingContact.set(null);
   }
 
+  /* Aktualizuje kontakt */
   updateContact() {
     const contact = this.editingContact();
     if (!contact) return;
@@ -192,6 +205,7 @@ export class ContactsComponent implements OnInit {
     }
   }
 
+  /* Aktualizuje kontakt z danymi */
   private updateContactWithData(contact: Contact, subcategoryId?: string) {
     const categoryId = this.editContactData.categoryId && this.editContactData.categoryId.trim() !== '' 
       ? this.editContactData.categoryId 
@@ -231,6 +245,7 @@ export class ContactsComponent implements OnInit {
     });
   }
 
+  /* Usuwa kontakt */
   deleteContact(contactId: string) {
     if (!confirm('Are you sure you want to delete this contact?')) {
       return;
@@ -254,16 +269,19 @@ export class ContactsComponent implements OnInit {
     });
   }
 
+  /* Pokazuje formularz dodawania kontaktu */
   showAddContactForm() {
     this.showAddForm.set(true);
     this.resetNewContactForm();
   }
 
+  /* Zamyka formularz dodawania kontaktu */
   hideAddContactForm() {
     this.showAddForm.set(false);
     this.resetNewContactForm();
   }
 
+  /* Resetuje formularz dodawania kontaktu */
   resetNewContactForm() {
     this.newContact = {
       firstName: '',
@@ -278,6 +296,7 @@ export class ContactsComponent implements OnInit {
     };
   }
 
+  /* Dodaje kontakt */
   addContact() {
     // Validate password length
     if (this.newContact.password.length < 8) {
@@ -313,6 +332,7 @@ export class ContactsComponent implements OnInit {
     }
   }
 
+  /* Tworzy kontakt z danymi */
   private createContactWithData(subcategoryId?: string) {
     const request: CreateContactRequest = {
       firstName: this.newContact.firstName,

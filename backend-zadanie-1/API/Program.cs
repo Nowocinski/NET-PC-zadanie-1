@@ -123,7 +123,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Auth endpoints
+/* Logowanie */
 app.MapPost("/api/auth/login", async (LoginRequest request, IUserRepository userRepository) =>
 {
     var tokens = await userRepository.GenerateTokensAsync(request.Email, request.Password);
@@ -136,6 +136,7 @@ app.MapPost("/api/auth/login", async (LoginRequest request, IUserRepository user
 .WithName("Login")
 .WithOpenApi();
 
+/* Rejestracja */
 app.MapPost("/api/auth/register", async (RegisterRequest request, IUserRepository userRepository) =>
 {
     var user = await userRepository.RegisterAsync(request.Email, request.Password, request.Name);
@@ -148,6 +149,7 @@ app.MapPost("/api/auth/register", async (RegisterRequest request, IUserRepositor
 .WithName("Register")
 .WithOpenApi();
 
+/* Odświeżanie tokenów */
 app.MapPost("/api/auth/refresh", async (RefreshTokenRequest request, IUserRepository userRepository) =>
 {
     var tokens = await userRepository.RefreshTokensAsync(request.AccessToken, request.RefreshToken);
@@ -160,7 +162,7 @@ app.MapPost("/api/auth/refresh", async (RefreshTokenRequest request, IUserReposi
 .WithName("RefreshToken")
 .WithOpenApi();
 
-// Category endpoints
+/* Pobieranie kategorii */
 app.MapGet("/api/categories", async (ICategoryRepository categoryRepository) =>
 {
     var categories = await categoryRepository.GetAllAsync();
@@ -169,7 +171,7 @@ app.MapGet("/api/categories", async (ICategoryRepository categoryRepository) =>
 .WithName("GetCategories")
 .WithOpenApi();
 
-// Subcategory endpoints
+/* Pobieranie podkategorii */
 app.MapGet("/api/subcategories", async ([AsParameters] GetSubcategoriesRequest request, ISubcategoryRepository subcategoryRepository) =>
 {
     var subcategories = await subcategoryRepository.GetByCategoryNameAsync(request.Name);
@@ -178,6 +180,7 @@ app.MapGet("/api/subcategories", async ([AsParameters] GetSubcategoriesRequest r
 .WithName("GetSubcategories")
 .WithOpenApi();
 
+/* Tworzenie podkategorii */
 app.MapPost("/api/subcategories", async (CreateSubcategoryRequest request, ISubcategoryRepository subcategoryRepository) =>
 {
     var subcategory = await subcategoryRepository.AddAsync(request.SubcategoryName, request.CategoryName);
@@ -198,7 +201,7 @@ app.MapPost("/api/subcategories", async (CreateSubcategoryRequest request, ISubc
 .WithName("CreateSubcategory")
 .WithOpenApi();
 
-// Contact endpoints
+/* Pobieranie kontaktów */
 app.MapGet("/api/contacts", async (IContactRepository contactRepository, ICategoryRepository categoryRepository, ISubcategoryRepository subcategoryRepository) =>
 {
     var contacts = await contactRepository.GetAllAsync();
@@ -232,6 +235,7 @@ app.MapGet("/api/contacts", async (IContactRepository contactRepository, ICatego
 .WithName("GetContacts")
 .WithOpenApi();
 
+/* Usuwanie kontaktu */
 app.MapDelete("/api/contacts/{id}", async (Guid id, IContactRepository contactRepository) =>
 {
     await contactRepository.DeleteAsync(id);
@@ -240,6 +244,7 @@ app.MapDelete("/api/contacts/{id}", async (Guid id, IContactRepository contactRe
 .WithName("DeleteContact")
 .WithOpenApi();
 
+/* Tworzenie kontaktu */
 app.MapPost("/api/contacts", async (CreateContactRequest request, ClaimsPrincipal user, IContactRepository contactRepository) =>
 {
     var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -275,6 +280,7 @@ app.MapPost("/api/contacts", async (CreateContactRequest request, ClaimsPrincipa
 .WithName("CreateContact")
 .WithOpenApi();
 
+/* Aktualizacja kontaktu */
 app.MapPut("/api/contacts/{id}", async (Guid id, UpdateContactRequest request, IContactRepository contactRepository) =>
 {
     var contact = new Core.Entities.Contact

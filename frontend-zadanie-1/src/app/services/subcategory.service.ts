@@ -16,16 +16,19 @@ export interface CreateSubcategoryRequest {
 @Injectable({
   providedIn: 'root'
 })
+/* Serwis podkategorii */
 export class SubcategoryService {
   private readonly apiUrl = 'http://localhost:5088/api/subcategories';
 
   constructor(private readonly http: HttpClient) {}
 
+  /* Pobiera podkategorie */
   getSubcategoriesByCategoryName(categoryName: string): Observable<Subcategory[]> {
     const params = new HttpParams().set('name', categoryName);
     return this.http.get<Subcategory[]>(this.apiUrl, { params });
   }
 
+  /* Dodaje podkategorię */
   createSubcategory(request: CreateSubcategoryRequest): Observable<Subcategory> {
     return this.http.post<Subcategory>(this.apiUrl, request);
   }
